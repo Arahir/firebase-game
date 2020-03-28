@@ -1,10 +1,13 @@
+import firebase from "firebase";
 import React from "react";
-import "./App.css";
-import firebase, { User } from "firebase";
 import { StyledFirebaseAuth } from "react-firebaseui";
+import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+
 import { useAuth, UserContext } from "./Components/Auth";
+import "./App.css";
+import { Game } from "./Components/GameModule/Game";
+
 // Configure Firebase.
-console.log(process.env);
 const config = {
   apiKey: process.env.REACT_APP_apiKey,
   authDomain: process.env.REACT_APP_authDomain
@@ -24,7 +27,6 @@ const uiConfig = {
   }
 };
 
-const NameComposant = ({ name }: { name: string }) => <h1>{name}</h1>;
 function App() {
   const { isSignedIn, user } = useAuth();
   return !isSignedIn ? (
@@ -33,9 +35,18 @@ function App() {
     </div>
   ) : (
     <UserContext.Provider value={user}>
-      <NameComposant name={user?.displayName || ""} />
-      <img src={user?.photoURL || ""} />
-      <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+      <Router>
+        <Switch>
+          <Route path="/game/:gameId">
+            <Game />
+          </Route>
+          <Route path="/">
+            <div>Home</div>
+            <Link to="/game/12">Créer</Link>
+          </Route>
+        </Switch>
+        <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+      </Router>
     </UserContext.Provider>
   );
 }
