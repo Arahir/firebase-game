@@ -7,11 +7,11 @@ export const Game = () => {
     <Switch>
       <Route path={`${match.path}/selection`}>
         <div>Select an identity for</div>
-        <Link to={`${match.path}/waiting`}>Valider</Link>
+        <Link to={`${match.url}/waiting`}>Valider</Link>
       </Route>
       <Route path={`${match.path}/waiting`}>
         <div>waiting for</div>
-        <Link to={`${match.path}/play`}>Continue</Link>
+        <Link to={`${match.url}/play`}>Continue</Link>
       </Route>
       <Route path={`${match.path}/play`}>
         <div>
@@ -22,7 +22,7 @@ export const Game = () => {
       </Route>
       <Route path={`${match.path}`}>
         <div>Players</div>
-        <Link to={`${match.path}/waiting`}>Démarrer</Link>
+        <Link to={`${match.url}/waiting`}>Démarrer</Link>
       </Route>
     </Switch>
   );
