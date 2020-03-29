@@ -33,12 +33,16 @@ export function createGame(user: firebase.User) {
   });
 }
 
-export function getGame(gameId: string, callback: (data: any) => void) {
+export function getGame(
+  gameId: string,
+  callbackSuccess: (data: any) => void,
+  callbackError: () => void
+) {
   const db = firebase.firestore();
   return db
     .collection(`game`)
     .doc(gameId)
-    .onSnapshot(callback);
+    .onSnapshot(callbackSuccess, callbackError);
 }
 
 export function addPlayer(game: Game, user: firebase.User) {

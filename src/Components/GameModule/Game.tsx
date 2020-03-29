@@ -1,5 +1,7 @@
+import { keyBy } from "lodash";
 import React, { useEffect, createContext, useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
+
 import { getGame, addPlayer, changeStep, createGame } from "../../api";
 import { UserContext } from "../Auth";
 import { Game, Player } from "../../types";
@@ -10,11 +12,15 @@ const GameContext = createContext<Game | null>(null);
 export const GameComponent = () => {
   let { gameId } = useParams();
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
+  const [isInError, setIsInError] = useState(false);
   const user = useContext(UserContext);
   const history = useHistory();
   const restart = async () => {
     if (!user) {
       return;
+    }
+    if (isInError) {
+      setIsInError(false);
     }
     const game = await createGame(user);
     const gameId = game.id;
@@ -22,12 +28,23 @@ export const GameComponent = () => {
     history.push(`/game/${gameId}`);
   };
   useEffect(() => {
-    if (!gameId) {
+    if (!gameId || !user) {
       return;
     }
     function handleChange(fetchedGame: any) {
+      if (!fetchedGame.exists) {
+        setIsInError(true);
+        return;
+      }
       const gameData = fetchedGame.data();
-      console.log(gameData);
+
+      if (gameData.step !== "pending") {
+        const players = keyBy(gameData.players, "userId");
+        if (!players[(user as firebase.User).uid]) {
+          setIsInError(true);
+        }
+      }
+
       const game: Game = {
         id: gameId as string,
         players: gameData?.players || [],
@@ -38,15 +55,19 @@ export const GameComponent = () => {
       setCurrentGame(game);
     }
 
-    getGame(gameId, handleChange);
-  }, [gameId]);
+    function handleError() {
+      setIsInError(true);
+    }
+
+    getGame(gameId, handleChange, handleError);
+  }, [gameId, user]);
 
   useEffect(() => {
-    if (currentGame == null || user == null) {
+    if (isInError || currentGame == null || user == null) {
       return;
     }
     addPlayer(currentGame, user);
-  }, [currentGame, user]);
+  }, [currentGame, user, isInError]);
 
   const startGame = () => {
     if (!gameId) {
@@ -58,7 +79,13 @@ export const GameComponent = () => {
   return (
     <GameContext.Provider value={currentGame}>
       <div>
-        {(!currentGame || currentGame.step === "pending") && (
+        {isInError && (
+          <>
+            This game does not exist
+            <button onClick={restart}>Create a new one?</button>
+          </>
+        )}
+        {currentGame?.step === "pending" && (
           <>
             <div>Players</div>
             {currentGame?.players.map((player: Player) => (
