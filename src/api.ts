@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import { Game, Player } from "./types";
+import { Game, Player, Identity } from "./types";
 
 export function createPlayer(user: firebase.User): Player {
   const { photoURL, uid, displayName } = user;
@@ -87,5 +87,23 @@ export function addIdentity(
         ...game.identities,
         createIdentity(identityName, userId, pickedFor.userId)
       ]
+    });
+}
+
+export function foundAnswer(game: Game, userId: string) {
+  const db = firebase.firestore();
+  const updatedIdentities = game.identities.map((identity: Identity) => {
+    if (identity.pickedFor === userId) {
+      return { ...identity, found: true };
+    }
+
+    return identity;
+  });
+
+  return db
+    .collection("game")
+    .doc(game.id)
+    .update({
+      identities: updatedIdentities
     });
 }

@@ -71,6 +71,7 @@ export const GameComponent = () => {
         {currentGame?.step === "ongoing" && (
           <Playing game={currentGame} user={user} />
         )}
+        {currentGame?.step === "done" && <h1>All done</h1>}
       </div>
     </GameContext.Provider>
   );
