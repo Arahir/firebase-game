@@ -1,6 +1,6 @@
-import { findIndex } from "lodash";
+import { findIndex, some } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Game, Player } from "../../types";
+import { Game, Player, Identity } from "../../types";
 import { addIdentity, changeStep } from "../../api";
 
 interface SelectionProps {
@@ -11,6 +11,7 @@ interface SelectionProps {
 export const Selection: React.FC<SelectionProps> = ({ game, user }) => {
   const [pickFor, setPickFor] = useState<Player | null>(null);
   const [identityName, setIdentityName] = useState("");
+  const [isWaiting, setIsWaiting] = useState(false);
   useEffect(() => {
     if (game == null || user == null) {
       return;
@@ -27,8 +28,17 @@ export const Selection: React.FC<SelectionProps> = ({ game, user }) => {
   useEffect(() => {
     if (game.players.length === game.identities.length) {
       changeStep(game.id, "ongoing");
+      return;
     }
-  }, [game]);
+
+    const isDoneSelecting = some(game.identities, (identity: Identity) => {
+      return identity.pickedBy === user?.uid;
+    });
+
+    if (isDoneSelecting) {
+      setIsWaiting(true);
+    }
+  }, [game, user]);
 
   const validate = () => {
     if (user && pickFor && identityName.length > 0) {
@@ -36,7 +46,7 @@ export const Selection: React.FC<SelectionProps> = ({ game, user }) => {
     }
   };
 
-  return (
+  return !isWaiting ? (
     <div>
       Select an identity for
       <img
@@ -49,6 +59,19 @@ export const Selection: React.FC<SelectionProps> = ({ game, user }) => {
       <button onClick={validate} disabled={identityName.length === 0}>
         Valider
       </button>
+    </div>
+  ) : (
+    <div>
+      <h2>En attente des autres joueurs</h2>
+      <p>
+        Vous avez choisi <b>{identityName}</b> pour
+        <img
+          src={pickFor?.photoURL}
+          alt="player img"
+          width="200px"
+          height="auto"
+        />
+      </p>
     </div>
   );
 };
