@@ -11,6 +11,7 @@ interface PlayingProps {
 export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
   const [players] = useState(keyBy(game.players, "userId"));
   const [answer, setAnswer] = useState("");
+  const [isInError, setIsInError] = useState(false);
   const [currentPlayerIdentity, setCurrentPlayerIdentity] = useState<
     Identity | undefined
   >(undefined);
@@ -36,6 +37,9 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
   const validate = () => {
     if (answer === currentPlayerIdentity?.name && user) {
       foundAnswer(game, user?.uid);
+      setIsInError(false);
+    } else {
+      setIsInError(true);
     }
   };
 
@@ -45,6 +49,7 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
       <button onClick={validate} disabled={answer.length === 0}>
         valider
       </button>
+      {isInError && <h2>Faux! Essaye encore</h2>}
       <ul>
         {game.identities.map((identity: Identity) => (
           <li key={identity.pickedFor}>
