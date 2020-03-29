@@ -1,16 +1,18 @@
 import firebase from "firebase";
 import React from "react";
 import { StyledFirebaseAuth } from "react-firebaseui";
-import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { useAuth, UserContext } from "./Components/Auth";
 import "./App.css";
-import { Game } from "./Components/GameModule/Game";
+import { GameComponent as Game } from "./Components/GameModule/Game";
+import { Home } from "./Components/Home";
 
 // Configure Firebase.
 const config = {
   apiKey: process.env.REACT_APP_apiKey,
-  authDomain: process.env.REACT_APP_authDomain
+  authDomain: process.env.REACT_APP_authDomain,
+  projectId: "lifen-game"
   // ...
 };
 firebase.initializeApp(config);
@@ -41,8 +43,7 @@ function App() {
             <Game />
           </Route>
           <Route path="/">
-            <div>Home</div>
-            <Link to="/game/12">Créer</Link>
+            <Home />
           </Route>
         </Switch>
         <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
