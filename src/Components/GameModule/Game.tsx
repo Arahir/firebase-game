@@ -70,9 +70,10 @@ export const GameComponent = () => {
                 height="auto"
               />
             ))}
-            {currentGame?.ownerId === user?.uid && (
-              <button onClick={startGame}>Démarrer</button>
-            )}
+            {currentGame?.ownerId === user?.uid &&
+              (currentGame?.players || []).length > 1 && (
+                <button onClick={startGame}>Démarrer</button>
+              )}
           </>
         )}
         {currentGame?.step === "selection" && (
