@@ -46,3 +46,14 @@ export function addPlayer(game: Game, user: firebase.User) {
       players: [...game.players, createPlayer(user)]
     });
 }
+
+export function changeStep(gameId: string, newStep: string) {
+  const db = firebase.firestore();
+
+  return db
+    .collection("game")
+    .doc(gameId)
+    .update({
+      step: newStep
+    });
+}
