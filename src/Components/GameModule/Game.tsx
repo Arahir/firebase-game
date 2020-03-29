@@ -4,6 +4,7 @@ import { getGame, addPlayer, changeStep } from "../../api";
 import { UserContext } from "../Auth";
 import { Game, Player } from "../../types";
 import { Selection } from "./Selection";
+import { Playing } from "./Playing";
 
 const GameContext = createContext<Game | null>(null);
 export const GameComponent = () => {
@@ -67,7 +68,9 @@ export const GameComponent = () => {
         {currentGame?.step === "selection" && (
           <Selection game={currentGame} user={user} />
         )}
-        {currentGame?.step === "ongoing" && <h1>Currently playing</h1>}
+        {currentGame?.step === "ongoing" && (
+          <Playing game={currentGame} user={user} />
+        )}
       </div>
     </GameContext.Provider>
   );
