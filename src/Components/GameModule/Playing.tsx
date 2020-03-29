@@ -21,7 +21,7 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
     });
 
     setCurrentPlayerIdentity(currentIdentity);
-  }, [game.identities]);
+  }, [game.identities, user]);
 
   useEffect(() => {
     const allFound = game.identities.every(

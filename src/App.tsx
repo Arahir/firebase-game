@@ -46,7 +46,7 @@ function App() {
             <Home />
           </Route>
         </Switch>
-        <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+        <button onClick={() => firebase.auth().signOut()}>Sign-out</button>
       </Router>
     </UserContext.Provider>
   );
