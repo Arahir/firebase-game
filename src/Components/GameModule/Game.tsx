@@ -1,6 +1,6 @@
 import React, { useEffect, createContext, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
-import { getGame, addPlayer, changeStep } from "../../api";
+import { useParams, useHistory } from "react-router-dom";
+import { getGame, addPlayer, changeStep, createGame } from "../../api";
 import { UserContext } from "../Auth";
 import { Game, Player } from "../../types";
 import { Selection } from "./Selection";
@@ -11,6 +11,16 @@ export const GameComponent = () => {
   let { gameId } = useParams();
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
   const user = useContext(UserContext);
+  const history = useHistory();
+  const restart = async () => {
+    if (!user) {
+      return;
+    }
+    const game = await createGame(user);
+    const gameId = game.id;
+
+    history.push(`/game/${gameId}`);
+  };
   useEffect(() => {
     if (!gameId) {
       return;
@@ -71,7 +81,12 @@ export const GameComponent = () => {
         {currentGame?.step === "ongoing" && (
           <Playing game={currentGame} user={user} />
         )}
-        {currentGame?.step === "done" && <h1>All done</h1>}
+        {currentGame?.step === "done" && (
+          <>
+            <h1>All done</h1>
+            <button onClick={restart}>New game?</button>
+          </>
+        )}
       </div>
     </GameContext.Provider>
   );
