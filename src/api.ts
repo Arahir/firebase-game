@@ -10,6 +10,19 @@ export function createPlayer(user: firebase.User): Player {
   };
 }
 
+export function createIdentity(
+  name: string,
+  pickedBy: string,
+  pickedFor: string
+) {
+  return {
+    found: false,
+    pickedBy,
+    pickedFor,
+    name
+  };
+}
+
 export function createGame(user: firebase.User) {
   const db = firebase.firestore();
 
@@ -38,7 +51,7 @@ export function addPlayer(game: Game, user: firebase.User) {
   if (alreadyIn) {
     return Promise.resolve(game);
   }
-  console.log(game);
+
   return db
     .collection("game")
     .doc(game.id)
@@ -55,5 +68,24 @@ export function changeStep(gameId: string, newStep: string) {
     .doc(gameId)
     .update({
       step: newStep
+    });
+}
+
+export function addIdentity(
+  game: Game,
+  userId: string,
+  pickedFor: Player,
+  identityName: string
+) {
+  const db = firebase.firestore();
+
+  return db
+    .collection("game")
+    .doc(game.id)
+    .update({
+      identities: [
+        ...game.identities,
+        createIdentity(identityName, userId, pickedFor.userId)
+      ]
     });
 }

@@ -1,11 +1,5 @@
 import React, { useEffect, createContext, useState, useContext } from "react";
-import {
-  useRouteMatch,
-  Switch,
-  Route,
-  Link,
-  useParams
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getGame, addPlayer, changeStep } from "../../api";
 import { UserContext } from "../Auth";
 import { Game, Player } from "../../types";
@@ -13,7 +7,6 @@ import { Selection } from "./Selection";
 
 const GameContext = createContext<Game | null>(null);
 export const GameComponent = () => {
-  let match = useRouteMatch();
   let { gameId } = useParams();
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
   const user = useContext(UserContext);
@@ -74,21 +67,8 @@ export const GameComponent = () => {
         {currentGame?.step === "selection" && (
           <Selection game={currentGame} user={user} />
         )}
+        {currentGame?.step === "ongoing" && <h1>Currently playing</h1>}
       </div>
-      <Switch>
-        <Route path={`${match.path}/waiting`}>
-          <div>waiting for</div>
-          <Link to={`${match.url}/play`}>Continue</Link>
-        </Route>
-        <Route path={`${match.path}/play`}>
-          <div>
-            who are you?
-            <input />
-            <div>other identities</div>
-          </div>
-        </Route>
-        <Route path={`${match.path}`}></Route>
-      </Switch>
     </GameContext.Provider>
   );
 };
