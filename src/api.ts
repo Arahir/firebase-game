@@ -1,20 +1,16 @@
-import firebase from "firebase";
-import { Game, Player, Identity } from "./types";
+import firebase from 'firebase';
+import { Game, Player, Identity } from './types';
 
 export function createPlayer(user: firebase.User): Player {
   const { photoURL, uid, displayName } = user;
   return {
     userId: uid,
-    photoURL: photoURL || "",
-    displayName: displayName || ""
+    photoURL: photoURL || '',
+    displayName: displayName || ''
   };
 }
 
-export function createIdentity(
-  name: string,
-  pickedBy: string,
-  pickedFor: string
-) {
+export function createIdentity(name: string, pickedBy: string, pickedFor: string) {
   return {
     found: false,
     pickedBy,
@@ -26,9 +22,9 @@ export function createIdentity(
 export function createGame(user: firebase.User) {
   const db = firebase.firestore();
 
-  return db.collection("game").add({
+  return db.collection('game').add({
     ownerId: user.uid,
-    step: "pending",
+    step: 'pending',
     players: [createPlayer(user)]
   });
 }
@@ -57,10 +53,21 @@ export function addPlayer(game: Game, user: firebase.User) {
   }
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(game.id)
     .update({
       players: [...game.players, createPlayer(user)]
+    });
+}
+
+export function setCurrentPlayer(gameId: string, playerIdx: number) {
+  const db = firebase.firestore();
+
+  return db
+    .collection('game')
+    .doc(gameId)
+    .update({
+      currentPlayerIdx: playerIdx
     });
 }
 
@@ -68,29 +75,21 @@ export function changeStep(gameId: string, newStep: string) {
   const db = firebase.firestore();
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(gameId)
     .update({
       step: newStep
     });
 }
 
-export function addIdentity(
-  game: Game,
-  userId: string,
-  pickedFor: Player,
-  identityName: string
-) {
+export function addIdentity(game: Game, userId: string, pickedFor: Player, identityName: string) {
   const db = firebase.firestore();
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(game.id)
     .update({
-      identities: [
-        ...game.identities,
-        createIdentity(identityName, userId, pickedFor.userId)
-      ]
+      identities: [...game.identities, createIdentity(identityName, userId, pickedFor.userId)]
     });
 }
 
@@ -105,7 +104,7 @@ export function foundAnswer(game: Game, userId: string) {
   });
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(game.id)
     .update({
       identities: updatedIdentities

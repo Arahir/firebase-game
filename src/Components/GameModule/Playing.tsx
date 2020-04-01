@@ -48,6 +48,10 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
         valider
       </button>
       {isInError && <h2>Faux! Essaye encore</h2>}
+      <p>
+        C'est au tour de:
+        <img src={game.players[game.currentPlayerIdx || 0].photoURL} alt="player url" />
+      </p>
       <ul>
         {game.identities.map((identity: Identity) => (
           <li key={identity.pickedFor}>

@@ -1,12 +1,12 @@
-import { keyBy } from "lodash";
-import React, { useEffect, createContext, useState, useContext } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { keyBy, random } from 'lodash';
+import React, { useEffect, createContext, useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 
-import { getGame, addPlayer, changeStep, createGame } from "../../api";
-import { UserContext } from "../Auth";
-import { Game, Player } from "../../types";
-import { Selection } from "./Selection";
-import { Playing } from "./Playing";
+import { getGame, addPlayer, changeStep, createGame, setCurrentPlayer } from '../../api';
+import { UserContext } from '../Auth';
+import { Game, Player } from '../../types';
+import { Selection } from './Selection';
+import { Playing } from './Playing';
 
 const GameContext = createContext<Game | null>(null);
 export const GameComponent = () => {
@@ -38,8 +38,8 @@ export const GameComponent = () => {
       }
       const gameData = fetchedGame.data();
 
-      if (gameData.step !== "pending") {
-        const players = keyBy(gameData.players, "userId");
+      if (gameData.step !== 'pending') {
+        const players = keyBy(gameData.players, 'userId');
         if (!players[(user as firebase.User).uid]) {
           setIsInError(true);
         }
@@ -70,10 +70,12 @@ export const GameComponent = () => {
   }, [currentGame, user, isInError]);
 
   const startGame = () => {
-    if (!gameId) {
+    if (!gameId || (currentGame?.players?.length || 0) < 2) {
       return;
     }
-    changeStep(gameId, "selection");
+    const playerPosition = random((currentGame?.players.length as number) - 1);
+    setCurrentPlayer(gameId, playerPosition);
+    changeStep(gameId, 'selection');
   };
 
   return (
@@ -85,7 +87,7 @@ export const GameComponent = () => {
             <button onClick={restart}>Create a new one?</button>
           </>
         )}
-        {currentGame?.step === "pending" && (
+        {currentGame?.step === 'pending' && (
           <>
             <div>Players</div>
             {currentGame?.players.map((player: Player) => (
@@ -97,19 +99,14 @@ export const GameComponent = () => {
                 height="auto"
               />
             ))}
-            {currentGame?.ownerId === user?.uid &&
-              (currentGame?.players || []).length > 1 && (
-                <button onClick={startGame}>Démarrer</button>
-              )}
+            {currentGame?.ownerId === user?.uid && (currentGame?.players || []).length > 1 && (
+              <button onClick={startGame}>Démarrer</button>
+            )}
           </>
         )}
-        {currentGame?.step === "selection" && (
-          <Selection game={currentGame} user={user} />
-        )}
-        {currentGame?.step === "ongoing" && (
-          <Playing game={currentGame} user={user} />
-        )}
-        {currentGame?.step === "done" && (
+        {currentGame?.step === 'selection' && <Selection game={currentGame} user={user} />}
+        {currentGame?.step === 'ongoing' && <Playing game={currentGame} user={user} />}
+        {currentGame?.step === 'done' && (
           <>
             <h1>All done</h1>
             <button onClick={restart}>New game?</button>
