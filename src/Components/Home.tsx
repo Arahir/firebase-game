@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAuth, UserContext } from './Auth';
+import { UserContext } from './Auth';
 import { createGame } from '../api';
 import styled from 'styled-components';
 
@@ -18,7 +18,6 @@ const CreateButton = styled.button`
 `;
 
 export const Home: React.FC<any> = props => {
-  // const isSignedIn = useAuth();
   const user = useContext(UserContext);
   const history = useHistory();
   const start = async () => {

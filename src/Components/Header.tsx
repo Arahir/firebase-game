@@ -4,7 +4,7 @@ import { StyledFirebaseAuth } from 'react-firebaseui';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { useAuth, UserContext } from '../Components/Auth';
+import { useAuth } from '../Components/Auth';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -44,7 +44,6 @@ export default () => {
   const history = useHistory();
 
   const { isSignedIn, user } = useAuth();
-  console.log(user);
   const isHomePage = history.location.pathname === '/';
   const goHome = () => {
     if (isHomePage) {

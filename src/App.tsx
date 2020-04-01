@@ -13,12 +13,11 @@ const config = {
   apiKey: process.env.REACT_APP_apiKey,
   authDomain: process.env.REACT_APP_authDomain,
   projectId: 'lifen-game'
-  // ...
 };
 firebase.initializeApp(config);
 
 function App() {
-  const { isSignedIn, user } = useAuth();
+  const { user } = useAuth();
   return (
     <UserContext.Provider value={user}>
       <Router>
