@@ -50,7 +50,8 @@ export const GameComponent = () => {
         players: gameData?.players || [],
         identities: gameData?.identities || [],
         step: gameData?.step,
-        ownerId: gameData?.ownerId
+        ownerId: gameData?.ownerId,
+        currentPlayerIdx: gameData?.currentPlayerIdx
       };
       setCurrentGame(game);
     }
