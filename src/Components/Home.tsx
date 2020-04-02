@@ -1,21 +1,9 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAuth, UserContext } from './Auth';
+import { UserContext } from './Auth';
 import { createGame } from '../api';
-import styled from 'styled-components';
 
-const CreateButton = styled.button`
-  padding: 20px 40px;
-  background-color: #ff0050;
-  border-radius: 30px;
-  border: none;
-  color: #fff;
-  font-weight: bold;
-  font-size: 18px;
-  cursor: pointer;
-  &:hover {
-  }
-`;
+import { Button, Window, WindowContent, WindowHeader } from 'react95';
 
 export const Home: React.FC<any> = props => {
   // const isSignedIn = useAuth();
@@ -30,9 +18,14 @@ export const Home: React.FC<any> = props => {
   };
 
   return (
-    <>
-      <div>Home</div>
-      <CreateButton onClick={start}>Créer une partie</CreateButton>
-    </>
+    <Window style={{ width: 400, margin: '200px 200px' }}>
+      <WindowHeader>Home</WindowHeader>
+      <WindowContent>
+        <span>Bienvenue sur le Time's Up développé un dimanche par Matthieu Faugère</span>
+        <br />
+        <br />
+        <Button onClick={start}>Créer une partie</Button>
+      </WindowContent>
+    </Window>
   );
 };

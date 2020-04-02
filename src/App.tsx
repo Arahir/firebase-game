@@ -1,12 +1,19 @@
 import firebase from 'firebase';
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
+
+import { themes, reset } from 'react95';
 
 import { useAuth, UserContext } from './Components/Auth';
 import './App.css';
 import { GameComponent as Game } from './Components/GameModule/Game';
 import { Home } from './Components/Home';
 import Layout from './Components/Layout';
+
+const GlobalStyle = createGlobalStyle`
+  ${reset}
+`;
 
 // Configure Firebase.
 const config = {
@@ -18,21 +25,24 @@ const config = {
 firebase.initializeApp(config);
 
 function App() {
-  const { isSignedIn, user } = useAuth();
+  const { user } = useAuth();
   return (
     <UserContext.Provider value={user}>
-      <Router>
-        <Layout>
-          <Switch>
-            <Route path="/game/:gameId">
-              <Game />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
-        </Layout>
-      </Router>
+      <ThemeProvider theme={themes.default}>
+        <GlobalStyle />
+        <Router>
+          <Layout>
+            <Switch>
+              <Route path="/game/:gameId">
+                <Game />
+              </Route>
+              <Route path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </Layout>
+        </Router>
+      </ThemeProvider>
     </UserContext.Provider>
   );
 }

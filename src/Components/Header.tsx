@@ -2,9 +2,10 @@ import firebase from 'firebase';
 import React from 'react';
 import { StyledFirebaseAuth } from 'react-firebaseui';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 
-import { useAuth, UserContext } from '../Components/Auth';
+import { AppBar, Avatar, Button, Toolbar } from 'react95';
+
+import { useAuth } from '../Components/Auth';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -17,28 +18,6 @@ const uiConfig = {
     signInSuccessWithAuthResult: () => false
   }
 };
-
-const NavBar = styled.div`
-  height: 100px;
-  background-color: #12130f;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  padding: 0px 15px;
-  justify-content: space-between;
-`;
-
-const Avatar = styled.img`
-  border-radius: 50%;
-  height: 40px;
-  width: 40px;
-  margin-right: 10px;
-`;
-
-const Profile = styled.div`
-  display: flex;
-  align-items: center;
-`;
 
 export default () => {
   const history = useHistory();
@@ -53,20 +32,22 @@ export default () => {
     history.push('/');
   };
   return (
-    <NavBar>
-      <strong onClick={goHome}>WhoAmI?!</strong>
-      {isSignedIn ? (
-        <>
-          <Profile>
-            {user?.photoURL && <Avatar src={user.photoURL} alt="photoUrl"></Avatar>}
-            <p>{user?.displayName ? user.displayName : user?.email && user.email}</p>
-          </Profile>
+    <AppBar>
+      <Toolbar>
+        <strong onClick={goHome}>WhoAmI?!</strong>
+        {isSignedIn ? (
+          <>
+            <div>
+              {user?.photoURL && <Avatar src={user.photoURL} alt="photoUrl"></Avatar>}
+              <p>{user?.displayName ? user.displayName : user?.email && user.email}</p>
+            </div>
 
-          <button onClick={() => firebase.auth().signOut()}>Déconnexion</button>
-        </>
-      ) : (
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-      )}
-    </NavBar>
+            <Button onClick={() => firebase.auth().signOut()}>Déconnexion</Button>
+          </>
+        ) : (
+          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+        )}
+      </Toolbar>
+    </AppBar>
   );
 };
