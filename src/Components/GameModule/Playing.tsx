@@ -26,9 +26,9 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
 
   useEffect(() => {
     const allFound = game.identities.every((identity: Identity) => identity.found);
-
+    console.log(game);
     if (allFound) {
-      changeStep(game.id, 'done');
+      changeStep(game, 'done');
     }
   }, [game]);
 
@@ -48,10 +48,14 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
         valider
       </button>
       {isInError && <h2>Faux! Essaye encore</h2>}
-      <p>
-        C'est au tour de:
-        <img src={game.players[game.currentPlayerIdx || 0].photoURL} alt="player url" />
-      </p>
+      {game.players[game.currentPlayerIdx || 0].userId === user?.uid ? (
+        <p>
+          C'est au tour de:
+          <img src={game.players[game.currentPlayerIdx || 0].photoURL} alt="player url" />
+        </p>
+      ) : (
+        <h1>C'est votre tour</h1>
+      )}
       <ul>
         {game.identities.map((identity: Identity) => (
           <li key={identity.pickedFor}>

@@ -2,7 +2,7 @@ import { keyBy, random } from 'lodash';
 import React, { useEffect, createContext, useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 
-import { getGame, addPlayer, changeStep, createGame, setCurrentPlayer } from '../../api';
+import { getGame, addPlayer, changeStep, createGame } from '../../api';
 import { UserContext } from '../Auth';
 import { Game, Player } from '../../types';
 import { Selection } from './Selection';
@@ -73,9 +73,8 @@ export const GameComponent = () => {
     if (!gameId || (currentGame?.players?.length || 0) < 2) {
       return;
     }
-    const playerPosition = random((currentGame?.players.length as number) - 1);
-    setCurrentPlayer(gameId, playerPosition);
-    changeStep(gameId, 'selection');
+
+    changeStep(currentGame as Game, 'selection');
   };
 
   return (

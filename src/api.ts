@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import { random } from 'lodash';
 import { Game, Player, Identity } from './types';
 
 export function createPlayer(user: firebase.User): Player {
@@ -25,7 +26,8 @@ export function createGame(user: firebase.User) {
   return db.collection('game').add({
     ownerId: user.uid,
     step: 'pending',
-    players: [createPlayer(user)]
+    players: [createPlayer(user)],
+    currentPlayerIdx: 0
   });
 }
 
@@ -60,26 +62,20 @@ export function addPlayer(game: Game, user: firebase.User) {
     });
 }
 
-export function setCurrentPlayer(gameId: string, playerIdx: number) {
+export function changeStep(game: Game, newStep: string) {
   const db = firebase.firestore();
-
+  const update: { step: string; currentPlayerIdx?: number } = {
+    step: newStep
+  };
+  if (newStep === 'selection') {
+    const playerPosition = random((game?.players.length as number) - 1);
+    update.currentPlayerIdx = playerPosition;
+    console.log(update);
+  }
   return db
     .collection('game')
-    .doc(gameId)
-    .update({
-      currentPlayerIdx: playerIdx
-    });
-}
-
-export function changeStep(gameId: string, newStep: string) {
-  const db = firebase.firestore();
-
-  return db
-    .collection('game')
-    .doc(gameId)
-    .update({
-      step: newStep
-    });
+    .doc(game.id)
+    .update(update);
 }
 
 export function addIdentity(game: Game, userId: string, pickedFor: Player, identityName: string) {
