@@ -48,10 +48,10 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
         valider
       </button>
       {isInError && <h2>Faux! Essaye encore</h2>}
-      {game.players[game.currentPlayerIdx || 0].userId === user?.uid ? (
+      {game.players[game.currentPlayerIdx as number].userId !== user?.uid ? (
         <p>
           C'est au tour de:
-          <img src={game.players[game.currentPlayerIdx || 0].photoURL} alt="player url" />
+          <img src={game.players[game.currentPlayerIdx as number].photoURL} alt="player url" />
         </p>
       ) : (
         <h1>C'est votre tour</h1>
