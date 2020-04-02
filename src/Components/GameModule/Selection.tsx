@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Game, Player, Identity } from '../../types';
 import { addIdentity, changeStep } from '../../api';
 
+import { Avatar, Button, TextField, WindowHeader, WindowContent } from 'react95';
+
 interface SelectionProps {
   game: Game;
   user: firebase.User | null;
@@ -46,22 +48,46 @@ export const Selection: React.FC<SelectionProps> = ({ game, user }) => {
     }
   };
 
-  return !isWaiting ? (
-    <div>
-      Select an identity for
-      <img src={pickFor?.photoURL} alt="player img" width="200px" height="auto" />
-      <input onChange={e => setIdentityName(e.target.value)} />
-      <button onClick={validate} disabled={identityName.length === 0}>
-        Valider
-      </button>
-    </div>
-  ) : (
-    <div>
-      <h2>En attente des autres joueurs</h2>
-      <p>
-        Vous avez choisi <b>{identityName}</b> pour
-        <img src={pickFor?.photoURL} alt="player img" width="200px" height="auto" />
-      </p>
-    </div>
+  return (
+    <>
+      <WindowHeader>Sélection</WindowHeader>
+
+      {!isWaiting ? (
+        <WindowContent>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            Sélectionne une identité pour
+            <Avatar
+              style={{ marginLeft: 10, marginRight: 10 }}
+              src={pickFor?.photoURL}
+              alt="player img"
+              width="200px"
+              height="auto"
+            />
+            {pickFor?.displayName}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <TextField style={{ flexGrow: '1' }} onChange={e => setIdentityName(e.target.value)} />
+            <Button onClick={validate} disabled={identityName.length === 0}>
+              Valider
+            </Button>
+          </div>
+        </WindowContent>
+      ) : (
+        <WindowContent>
+          <h2>En attente des autres joueurs</h2>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            Vous avez choisi <b>{identityName}</b> pour
+            <Avatar
+              style={{ marginLeft: 10, marginRight: 10 }}
+              src={pickFor?.photoURL}
+              alt="player img"
+              width="200px"
+              height="auto"
+            />{' '}
+            {pickFor?.displayName}
+          </div>
+        </WindowContent>
+      )}
+    </>
   );
 };

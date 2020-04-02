@@ -116,10 +116,12 @@ export const GameComponent = () => {
         {currentGame?.step === 'selection' && <Selection game={currentGame} user={user} />}
         {currentGame?.step === 'ongoing' && <Playing game={currentGame} user={user} />}
         {currentGame?.step === 'done' && (
-          <>
-            <h1>All done</h1>
-            <button onClick={restart}>New game?</button>
-          </>
+          <WindowContent>
+            <h1>La partie est terminée !</h1>
+            <br />
+            <br />
+            <Button onClick={restart}>New game?</Button>
+          </WindowContent>
         )}
       </Window>
     </GameContext.Provider>

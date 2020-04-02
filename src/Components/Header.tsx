@@ -31,22 +31,28 @@ export default () => {
     history.push('/');
   };
   return (
-    <AppBar>
-      <Toolbar>
-        <strong onClick={goHome}>WhoAmI?!</strong>
-        {isSignedIn ? (
-          <>
-            <div>
-              {user?.photoURL && <Avatar src={user.photoURL} alt="photoUrl"></Avatar>}
-              <p>{user?.displayName ? user.displayName : user?.email && user.email}</p>
-            </div>
+    <AppBar
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 15
+      }}
+    >
+      <strong onClick={goHome}>WhoAmI?!</strong>
+      {isSignedIn ? (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: 15 }}>
+            {user?.photoURL && <Avatar src={user.photoURL} alt="photoUrl"></Avatar>}
+            <p>{user?.displayName ? user.displayName : user?.email && user.email}</p>
+          </div>
 
-            <Button onClick={() => firebase.auth().signOut()}>Déconnexion</Button>
-          </>
-        ) : (
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-        )}
-      </Toolbar>
+          <Button onClick={() => firebase.auth().signOut()}>Déconnexion</Button>
+        </div>
+      ) : (
+        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+      )}
     </AppBar>
   );
 };
