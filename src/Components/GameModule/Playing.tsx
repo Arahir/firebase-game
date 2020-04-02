@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { keyBy } from "lodash";
-import { Game, Identity } from "../../types";
-import { foundAnswer, changeStep } from "../../api";
+import React, { useEffect, useState } from 'react';
+import { keyBy } from 'lodash';
+import { Game, Identity } from '../../types';
+import { foundAnswer, changeStep } from '../../api';
 
 interface PlayingProps {
   user: firebase.User | null;
@@ -9,12 +9,12 @@ interface PlayingProps {
 }
 
 export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
-  const [players] = useState(keyBy(game.players, "userId"));
-  const [answer, setAnswer] = useState("");
+  const [players] = useState(keyBy(game.players, 'userId'));
+  const [answer, setAnswer] = useState('');
   const [isInError, setIsInError] = useState(false);
-  const [currentPlayerIdentity, setCurrentPlayerIdentity] = useState<
-    Identity | undefined
-  >(undefined);
+  const [currentPlayerIdentity, setCurrentPlayerIdentity] = useState<Identity | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const currentIdentity = game.identities.find((identity: Identity) => {
@@ -25,17 +25,15 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
   }, [game.identities, user]);
 
   useEffect(() => {
-    const allFound = game.identities.every(
-      (identity: Identity) => identity.found
-    );
-
+    const allFound = game.identities.every((identity: Identity) => identity.found);
+    console.log(game);
     if (allFound) {
-      changeStep(game.id, "done");
+      changeStep(game, 'done');
     }
   }, [game]);
 
   const validate = () => {
-    if (answer === currentPlayerIdentity?.name && user) {
+    if (answer.toLowerCase() === currentPlayerIdentity?.name.toLowerCase() && user) {
       foundAnswer(game, user?.uid);
       setIsInError(false);
     } else {
@@ -50,13 +48,20 @@ export const Playing: React.FC<PlayingProps> = ({ game, user }) => {
         valider
       </button>
       {isInError && <h2>Faux! Essaye encore</h2>}
+      {game.players[game.currentPlayerIdx as number].userId !== user?.uid ? (
+        <p>
+          C'est au tour de:
+          <img src={game.players[game.currentPlayerIdx as number].photoURL} alt="player url" />
+        </p>
+      ) : (
+        <h1>C'est votre tour</h1>
+      )}
       <ul>
         {game.identities.map((identity: Identity) => (
           <li key={identity.pickedFor}>
-            {players[identity.pickedFor].displayName}{" "}
-            {(identity.found || identity.pickedFor !== user?.uid) &&
-              `- ${identity.name}`}{" "}
-            {identity.found && "- trouvé"}
+            {players[identity.pickedFor].displayName}{' '}
+            {(identity.found || identity.pickedFor !== user?.uid) && `- ${identity.name}`}{' '}
+            {identity.found && '- trouvé'}
           </li>
         ))}
       </ul>

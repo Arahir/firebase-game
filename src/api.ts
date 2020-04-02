@@ -1,20 +1,17 @@
-import firebase from "firebase";
-import { Game, Player, Identity } from "./types";
+import firebase from 'firebase';
+import { random } from 'lodash';
+import { Game, Player, Identity } from './types';
 
 export function createPlayer(user: firebase.User): Player {
   const { photoURL, uid, displayName } = user;
   return {
     userId: uid,
-    photoURL: photoURL || "",
-    displayName: displayName || ""
+    photoURL: photoURL || '',
+    displayName: displayName || ''
   };
 }
 
-export function createIdentity(
-  name: string,
-  pickedBy: string,
-  pickedFor: string
-) {
+export function createIdentity(name: string, pickedBy: string, pickedFor: string) {
   return {
     found: false,
     pickedBy,
@@ -26,10 +23,11 @@ export function createIdentity(
 export function createGame(user: firebase.User) {
   const db = firebase.firestore();
 
-  return db.collection("game").add({
+  return db.collection('game').add({
     ownerId: user.uid,
-    step: "pending",
-    players: [createPlayer(user)]
+    step: 'pending',
+    players: [createPlayer(user)],
+    currentPlayerIdx: 0
   });
 }
 
@@ -57,40 +55,37 @@ export function addPlayer(game: Game, user: firebase.User) {
   }
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(game.id)
     .update({
       players: [...game.players, createPlayer(user)]
     });
 }
 
-export function changeStep(gameId: string, newStep: string) {
+export function changeStep(game: Game, newStep: string) {
   const db = firebase.firestore();
-
+  const update: { step: string; currentPlayerIdx?: number } = {
+    step: newStep
+  };
+  if (newStep === 'selection') {
+    const playerPosition = random((game?.players.length as number) - 1);
+    update.currentPlayerIdx = playerPosition;
+    console.log(update);
+  }
   return db
-    .collection("game")
-    .doc(gameId)
-    .update({
-      step: newStep
-    });
+    .collection('game')
+    .doc(game.id)
+    .update(update);
 }
 
-export function addIdentity(
-  game: Game,
-  userId: string,
-  pickedFor: Player,
-  identityName: string
-) {
+export function addIdentity(game: Game, userId: string, pickedFor: Player, identityName: string) {
   const db = firebase.firestore();
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(game.id)
     .update({
-      identities: [
-        ...game.identities,
-        createIdentity(identityName, userId, pickedFor.userId)
-      ]
+      identities: [...game.identities, createIdentity(identityName, userId, pickedFor.userId)]
     });
 }
 
@@ -105,7 +100,7 @@ export function foundAnswer(game: Game, userId: string) {
   });
 
   return db
-    .collection("game")
+    .collection('game')
     .doc(game.id)
     .update({
       identities: updatedIdentities

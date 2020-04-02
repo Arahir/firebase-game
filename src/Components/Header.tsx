@@ -23,7 +23,6 @@ export default () => {
   const history = useHistory();
 
   const { isSignedIn, user } = useAuth();
-  console.log(user);
   const isHomePage = history.location.pathname === '/';
   const goHome = () => {
     if (isHomePage) {

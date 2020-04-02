@@ -17,4 +17,5 @@ export interface Game {
   step: string;
   players: Player[];
   identities: Identity[];
+  currentPlayerIdx?: number;
 }

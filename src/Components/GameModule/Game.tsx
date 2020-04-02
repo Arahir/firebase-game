@@ -52,7 +52,8 @@ export const GameComponent = () => {
         players: gameData?.players || [],
         identities: gameData?.identities || [],
         step: gameData?.step,
-        ownerId: gameData?.ownerId
+        ownerId: gameData?.ownerId,
+        currentPlayerIdx: gameData?.currentPlayerIdx
       };
       setCurrentGame(game);
     }
@@ -72,10 +73,11 @@ export const GameComponent = () => {
   }, [currentGame, user, isInError]);
 
   const startGame = () => {
-    if (!gameId) {
+    if (!gameId || (currentGame?.players?.length || 0) < 2) {
       return;
     }
-    changeStep(gameId, 'selection');
+
+    changeStep(currentGame as Game, 'selection');
   };
 
   return (

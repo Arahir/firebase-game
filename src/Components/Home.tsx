@@ -6,7 +6,6 @@ import { createGame } from '../api';
 import { Button, Window, WindowContent, WindowHeader } from 'react95';
 
 export const Home: React.FC<any> = props => {
-  // const isSignedIn = useAuth();
   const user = useContext(UserContext);
   const history = useHistory();
   const start = async () => {
